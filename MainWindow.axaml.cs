@@ -21,9 +21,10 @@ public partial class MainWindow : Window
 
     private void SendTestResult_OnClick(object? sender, RoutedEventArgs e)
     {
-        var pattern = @"[^А-Яа-яЁё\s]";
+        var pattern = @"^\d{10}$";
         var validationResult = Regex.IsMatch(DataFromApi, pattern);
-        ValidationResultTBlock.Text = validationResult ? "ФИО содержит запрещенные символы" : "ФИО не содержит запрещенные символы";
+        ValidationResultTBlock.Text = validationResult ? "ИНН верный" : "ИНН не верный";
+        System.Console.WriteLine(validationResult);
         
         using var doc = WordprocessingDocument.Open(@"TestCase.docx", true);
         var document = doc.MainDocumentPart.Document;
@@ -52,7 +53,7 @@ public partial class MainWindow : Window
     private async void GetDataFromApi_OnClick(object? sender, RoutedEventArgs e)
     {
         var httpClient = new HttpClient();
-        var content = await httpClient.GetStringAsync("http://localhost:4444/TransferSimulator/fullName");
+        var content = await httpClient.GetStringAsync("http://localhost:4444/TransferSimulator/inn");
         var data = JsonConvert.DeserializeObject<Dictionary<string, string>>(content);
         DataFromApi = data["value"];
         DataFromApiTBlock.Text = DataFromApi;
